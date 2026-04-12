@@ -1,1 +1,105 @@
-<h2>hello</h2>
+<h4>基本</h4>
+<div style="display: flex; gap: 10px; align-items: center">
+  <span>メルカリでの還元率</span>
+  <input type="number" step="0.1" min="1" [(ngModel)]="reward_rate" />%
+</div>
+
+<div class="divider"></div>
+<h4>請求</h4>
+
+<div class="flex-container">
+  <div style="overflow-x: auto">
+    <table style="width: max-content; margin: 0">
+      <tr>
+        <th>8の日</th>
+        <th>メルカリで買い物</th>
+        <th>請求金額</th>
+        <th>ポイント</th>
+        <th>期間限定P</th>
+        <th></th>
+      </tr>
+      @for (bill of billing_list; track $index) {
+      <tr>
+        <td><input type="checkbox" [(ngModel)]="billing_list[$index].eighth" /></td>
+        <td><input type="checkbox" [(ngModel)]="billing_list[$index].mercari" /></td>
+        <td>
+          <input type="number" step="1" min="0" [(ngModel)]="billing_list[$index].amount" />
+        </td>
+        <td>{{ calc_point(bill) }}</td>
+        <td>{{ calc_limited_point(bill) }}</td>
+        <td>
+          <button type="button"><span class="material-icons" (click)="delete_billing($index)">close</span></button>
+        </td>
+      </tr>
+      } @empty {
+      <tr>
+        <td>請求なし</td>
+      </tr>
+      }
+    </table>
+  </div>
+
+  <button type="button" (click)="add_billing()">追加</button>
+
+  <div style="display: flex; gap: 10px; align-items: center">
+    <span style="flex-basis: 130px">合計</span>
+    <input type="number" readonly="readonly" class="readonly" [ngModel]="total_billing" />円
+  </div>
+  <div style="display: flex; gap: 10px; align-items: center">
+    <span style="flex-basis: 130px">ポイント合計</span>
+    <input type="number" readonly="readonly" class="readonly" [ngModel]="total_point" />P
+  </div>
+  <div style="display: flex; gap: 10px; align-items: center">
+    <span style="flex-basis: 130px">期間限定P合計</span>
+    <input type="number" readonly="readonly" class="readonly" [ngModel]="total_limited_point" />P
+  </div>
+</div>
+
+<div class="divider"></div>
+<h4>残高</h4>
+
+<div class="flex-container">
+  <div style="display: flex; gap: 10px; align-items: center">
+    <span style="flex-basis: 130px">残高</span>
+    <input type="number" step="1" min="0" [(ngModel)]="balance" />円
+  </div>
+  <div style="display: flex; gap: 10px; align-items: center">
+    <span style="flex-basis: 130px">保有ポイント</span>
+    <input type="number" step="1" min="0" [(ngModel)]="point_balance" />P
+  </div>
+</div>
+
+<div class="divider"></div>
+<h4>支払い</h4>
+
+<div class="flex-container">
+  <div style="display: flex; gap: 10px; align-items: center">
+    <span style="flex-basis: 130px">必要チャージ</span>
+    <input type="number" readonly="readonly" class="readonly" [ngModel]="required_charge_balance" />円
+  </div>
+
+  <table style="width: max-content; margin: 0">
+    <tr>
+      <th>8の日</th>
+      <th>メルカリで買い物</th>
+      <th>支払い金額</th>
+    </tr>
+    @for (payment of payment_list; track $index) {
+    <tr>
+      <td>@if (payment.eighth) { <span>✅</span> }</td>
+      <td>@if (payment.mercari) { <span>✅</span> }</td>
+      <td>
+        <div style="display: flex; gap: 10px; align-items: center">
+          <input type="number" readonly="readonly" class="readonly" [ngModel]="payment.amount" />円
+        </div>
+      </td>
+    </tr>
+    } @empty {
+    <tr>
+      <td>支払いなし</td>
+    </tr>
+    }
+  </table>
+</div>
+
+<h4></h4>

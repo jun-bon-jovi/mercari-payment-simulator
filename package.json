@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "node set-env.mjs && ng serve",
+    "build": "node set-env.mjs && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "check": "biome check src"
@@ -18,6 +18,7 @@
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "dotenv": "^17.4.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
