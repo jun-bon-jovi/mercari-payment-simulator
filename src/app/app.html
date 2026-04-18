@@ -1,105 +1,148 @@
 <h4>基本</h4>
-<div style="display: flex; gap: 10px; align-items: center">
-  <span>メルカリでの還元率</span>
-  <input type="number" step="0.1" min="1" [(ngModel)]="reward_rate" />%
+<span>メルカリでの還元率</span>
+<!-- <input type="number" step="0.1" min="1" [(ngModel)]="reward_rate" />% -->
+<div>
+  <p-inputnumber
+    [(ngModel)]="reward_rate"
+    [showButtons]="true"
+    buttonLayout="horizontal"
+    [step]="0.1"
+    [min]="1.0"
+    suffix=" %"
+  >
+    <ng-template #incrementbuttonicon>
+      <span class="pi pi-plus"></span>
+    </ng-template>
+    <ng-template #decrementbuttonicon>
+      <span class="pi pi-minus"></span>
+    </ng-template>
+  </p-inputnumber>
 </div>
 
-<div class="divider"></div>
+<p-divider />
+
 <h4>請求</h4>
 
-<div class="flex-container">
-  <div style="overflow-x: auto">
-    <table style="width: max-content; margin: 0">
+<div>
+  <p-table
+    showGridlines
+    [reorderableColumns]="true"
+    [value]="billing_list()"
+    (onRowReorder)="refresh_payment_list()"
+    [tableStyle]="{'width':'auto'}"
+  >
+    <ng-template #header>
       <tr>
-        <th>8の日</th>
-        <th>メルカリで買い物</th>
-        <th>請求金額</th>
-        <th>ポイント</th>
-        <th>期間限定P</th>
-        <th></th>
+        <th [ngStyle]="60 | colStyle"></th>
+        <th [ngStyle]="100 | colStyle" pReorderableColumn>8の日</th>
+        <th [ngStyle]="100 | colStyle" pReorderableColumn>メルカリで買い物</th>
+        <th pReorderableColumn>請求金額</th>
+        <th [ngStyle]="60 | colStyle" pReorderableColumn></th>
       </tr>
-      @for (bill of billing_list; track $index) {
-      <tr>
-        <td><input type="checkbox" [(ngModel)]="billing_list[$index].eighth" /></td>
-        <td><input type="checkbox" [(ngModel)]="billing_list[$index].mercari" /></td>
-        <td>
-          <input type="number" step="1" min="0" [(ngModel)]="billing_list[$index].amount" />
+    </ng-template>
+    <ng-template #body [typeOf]="billing_list()" let-billing let-index="rowIndex">
+      <tr [pReorderableRow]="index">
+        <td style="text-align: center">
+          <i class="pi pi-bars" pReorderableRowHandle></i>
         </td>
-        <td>{{ calc_point(bill) }}</td>
-        <td>{{ calc_limited_point(bill) }}</td>
+        <td style="text-align: center">
+          <p-checkbox [binary]="true" [(ngModel)]="billing.eighth" (ngModelChange)="refresh_payment_list()" />
+        </td>
+        <td style="text-align: center">
+          <p-checkbox [binary]="true" [(ngModel)]="billing.mercari" (ngModelChange)="refresh_payment_list()" />
+        </td>
         <td>
-          <button type="button"><span class="material-icons" (click)="delete_billing($index)">close</span></button>
+          <p-inputnumber
+            mode="currency"
+            currency="JPY"
+            locale="jp-JP"
+            [min]="0"
+            [(ngModel)]="billing.amount"
+            (ngModelChange)=" refresh_payment_list()"
+          />
+        </td>
+        <td style="text-align: center">
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            severity="danger"
+            [text]="true"
+            (onClick)="delete_billing(index)"
+          />
         </td>
       </tr>
-      } @empty {
-      <tr>
-        <td>請求なし</td>
-      </tr>
-      }
-    </table>
-  </div>
-
-  <button type="button" (click)="add_billing()">追加</button>
-
-  <div style="display: flex; gap: 10px; align-items: center">
-    <span style="flex-basis: 130px">合計</span>
-    <input type="number" readonly="readonly" class="readonly" [ngModel]="total_billing" />円
-  </div>
-  <div style="display: flex; gap: 10px; align-items: center">
-    <span style="flex-basis: 130px">ポイント合計</span>
-    <input type="number" readonly="readonly" class="readonly" [ngModel]="total_point" />P
-  </div>
-  <div style="display: flex; gap: 10px; align-items: center">
-    <span style="flex-basis: 130px">期間限定P合計</span>
-    <input type="number" readonly="readonly" class="readonly" [ngModel]="total_limited_point" />P
-  </div>
+    </ng-template>
+  </p-table>
 </div>
 
-<div class="divider"></div>
+<div>
+  <button pButton (click)="add_billing()">
+    <i class="pi pi-plus" pButtonIcon></i>
+    <span pButtonLabel>請求追加</span>
+  </button>
+</div>
+
+<p-divider />
+
 <h4>残高</h4>
 
-<div class="flex-container">
-  <div style="display: flex; gap: 10px; align-items: center">
-    <span style="flex-basis: 130px">残高</span>
-    <input type="number" step="1" min="0" [(ngModel)]="balance" />円
-  </div>
-  <div style="display: flex; gap: 10px; align-items: center">
-    <span style="flex-basis: 130px">保有ポイント</span>
-    <input type="number" step="1" min="0" [(ngModel)]="point_balance" />P
+<div style="display: flex; gap: 10px; align-items: center">
+  <span style="flex-basis: 130px">残高</span>
+  <div>
+    <p-inputnumber fluid mode="currency" currency="JPY" locale="jp-JP" [min]="0" [(ngModel)]="balance" />
   </div>
 </div>
 
-<div class="divider"></div>
+<div style="display: flex; gap: 10px; align-items: center">
+  <span style="flex-basis: 130px">保有ポイント</span>
+  <div>
+    <p-inputnumber fluid mode="decimal" [min]="0" [(ngModel)]="point_balance" />
+  </div>
+</div>
+
+<p-divider />
+
 <h4>支払い</h4>
 
-<div class="flex-container">
-  <div style="display: flex; gap: 10px; align-items: center">
-    <span style="flex-basis: 130px">必要チャージ</span>
-    <input type="number" readonly="readonly" class="readonly" [ngModel]="required_charge_balance" />円
+<div style="display: flex; gap: 10px; align-items: center">
+  <span style="flex-basis: 130px">必要チャージ</span>
+  <div>
+    <p-inputnumber
+      fluid
+      mode="currency"
+      currency="JPY"
+      locale="jp-JP"
+      [readonly]="true"
+      [ngModel]="required_charge_amount()"
+    />
   </div>
+</div>
 
-  <table style="width: max-content; margin: 0">
-    <tr>
-      <th>8の日</th>
-      <th>メルカリで買い物</th>
-      <th>支払い金額</th>
-    </tr>
-    @for (payment of payment_list; track $index) {
-    <tr>
-      <td>@if (payment.eighth) { <span>✅</span> }</td>
-      <td>@if (payment.mercari) { <span>✅</span> }</td>
-      <td>
-        <div style="display: flex; gap: 10px; align-items: center">
-          <input type="number" readonly="readonly" class="readonly" [ngModel]="payment.amount" />円
-        </div>
-      </td>
-    </tr>
-    } @empty {
-    <tr>
-      <td>支払いなし</td>
-    </tr>
-    }
-  </table>
+<div>
+  <p-table showGridlines [value]="payment_list()" [tableStyle]="{'width':'auto'}">
+    <ng-template #header>
+      <tr>
+        <th [ngStyle]="100 | colStyle">8の日</th>
+        <th [ngStyle]="100 | colStyle">メルカリで買い物</th>
+        <th style="min-width: 100px">請求金額</th>
+        <th style="min-width: 100px">P</th>
+        <th style="min-width: 100px">限定P</th>
+        <th style="min-width: 100px">残高</th>
+        <th style="min-width: 100px">残P</th>
+      </tr>
+    </ng-template>
+    <ng-template #body [typeOf]="payment_list()" let-payment>
+      <tr>
+        <td style="text-align: center">@if (payment.eighth) { <i class="pi pi-check"></i> }</td>
+        <td style="text-align: center">@if (payment.mercari) { <i class="pi pi-check"></i> }</td>
+        <td>{{ payment.amount | currency:'JPY'}}</td>
+        <td>{{ payment.point }}</td>
+        <td>{{ payment.promotional_point }}</td>
+        <td>{{ payment.after_balance }}</td>
+        <td>{{ payment.after_point }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
 </div>
 
 <h4></h4>

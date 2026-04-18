@@ -5,6 +5,8 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import Aura from '@primeuix/themes/lara';
+import { providePrimeNG } from 'primeng/config';
 import { routes } from 'src/app/app.routes';
 import { AuthService } from 'src/app/auth.service';
 
@@ -26,5 +28,13 @@ export const appConfig: ApplicationConfig = {
     }),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: false || 'none',
+        },
+      },
+    }),
   ],
 };

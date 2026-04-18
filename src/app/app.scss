@@ -1,27 +1,9 @@
-.divider {
-  margin: 10px 0;
-  border-top: var(--border-width) solid var(--border);
-}
-
-.flex-container {
+:host {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-input {
-  margin-bottom: 0;
-  text-align: right;
-  &.readonly {
-    background-color: azure;
-    color: black;
-    font-weight: bold;
-  }
-}
-
-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+h4 {
   margin: 0;
 }
